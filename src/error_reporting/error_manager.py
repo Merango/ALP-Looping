@@ -23,7 +23,7 @@ class ErrorReportingManager:
     
     def __init__(
         self, 
-        log_file: str = 'alp_error.log', 
+        log_file: str = 'logs/alp_error.log', 
         notification_callback: Optional[Callable[[str, Dict[str, Any]], None]] = None
     ):
         """
@@ -33,7 +33,7 @@ class ErrorReportingManager:
             log_file (str): Path to the log file for error logging.
             notification_callback (Optional[Callable]): Optional callback for custom error notifications.
         """
-        # Determine project root directory (assuming this file is in src/error_reporting)
+        # Determine project root directory
         project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
         log_file = os.path.join(project_root, log_file)
         
