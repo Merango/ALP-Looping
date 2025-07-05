@@ -26,10 +26,16 @@ def test_log_error_reporter_file_logging(caplog):
         temp_log_path = temp_log_file.name
     
     try:
+        # Reset logging configuration
+        logging.getLogger().handlers.clear()
+        
         reporter = LogErrorReporter(log_file=temp_log_path)
         mock_error = MockException("Test file logging")
         
         reporter.report_error(mock_error, {"test": "file_context"}, ErrorSeverity.HIGH)
+        
+        # Flush log buffer
+        logging.shutdown()
         
         with open(temp_log_path, 'r') as log_file:
             log_content = log_file.read()
