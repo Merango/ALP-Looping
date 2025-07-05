@@ -20,7 +20,7 @@ def test_log_error_reporter_console_logging(caplog):
     assert len(caplog.records) > 0
     assert "Test console logging" in caplog.text
 
-def test_log_error_reporter_file_logging():
+def test_log_error_reporter_file_logging(caplog):
     """Test logging errors to a file."""
     with tempfile.NamedTemporaryFile(delete=False, mode='w+') as temp_log_file:
         temp_log_path = temp_log_file.name
@@ -40,7 +40,7 @@ def test_log_error_reporter_file_logging():
         # Clean up the temporary log file
         os.unlink(temp_log_path)
 
-def test_log_error_reporter_severity_mapping():
+def test_log_error_reporter_severity_mapping(caplog):
     """Test severity level mapping to log levels."""
     test_cases = [
         (ErrorSeverity.LOW, logging.DEBUG),
@@ -50,6 +50,7 @@ def test_log_error_reporter_severity_mapping():
     ]
     
     for severity, expected_level in test_cases:
+        caplog.clear()  # Clear previous log records
         reporter = LogErrorReporter()
         mock_error = MockException(f"Test {severity}")
         
