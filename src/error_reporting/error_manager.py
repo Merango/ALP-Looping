@@ -33,8 +33,9 @@ class ErrorReportingManager:
             log_file (str): Path to the log file for error logging.
             notification_callback (Optional[Callable]): Optional callback for custom error notifications.
         """
-        # Convert to absolute path
-        log_file = os.path.abspath(log_file)
+        # Determine project root directory (assuming this file is in src/error_reporting)
+        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+        log_file = os.path.join(project_root, log_file)
         
         # Ensure log directory exists
         os.makedirs(os.path.dirname(log_file) or '.', exist_ok=True)
