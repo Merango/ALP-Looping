@@ -33,12 +33,30 @@ class ErrorReportingManager:
             log_file (str): Path to the log file for error logging.
             notification_callback (Optional[Callable]): Optional callback for custom error notifications.
         """
-        # Determine project root directory
-        project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-        log_file = os.path.join(project_root, log_file)
+        # Determine base path - prefer logs directory in project root, fallback to relative path
+        potential_base_paths = [
+            os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'logs')),
+            os.path.abspath(os.path.join(os.getcwd(), 'logs')),
+            os.path.dirname(log_file)
+        ]
+        
+        # Find the first existing logs directory or create one
+        log_dir = None
+        for path in potential_base_paths:
+            if os.path.exists(path):
+                log_dir = path
+                break
+        
+        # If no logs directory found, create one in the project root
+        if not log_dir:
+            log_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'logs'))
+            os.makedirs(log_dir, exist_ok=True)
+        
+        # Construct full log file path
+        log_file = os.path.join(log_dir, os.path.basename(log_file))
         
         # Ensure log directory exists
-        os.makedirs(os.path.dirname(log_file) or '.', exist_ok=True)
+        os.makedirs(os.path.dirname(log_file), exist_ok=True)
         
         # Configure logging
         logging.basicConfig(
