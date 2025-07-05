@@ -61,10 +61,14 @@ class DegradationStrategy:
         self.current_retry_count += 1
         
         # Attempt state recovery if possible
-        if self.state_recovery_fn:
+        if self.state_recovery_fn and context is not None:
             try:
-                # Explicitly pass context to state recovery function
-                self.state_recovery_fn(context)
+                # Pass context directly to the recovery function
+                result = self.state_recovery_fn(context)
+                
+                # If result is a dict, update context
+                if isinstance(result, dict):
+                    context.update(result)
             except Exception as recovery_error:
                 logging.error(f"State recovery failed: {recovery_error}")
                 return False
