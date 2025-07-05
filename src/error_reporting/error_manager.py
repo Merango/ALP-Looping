@@ -51,8 +51,7 @@ class ErrorReportingManager:
             potential_log_dir = os.path.join(base_path, 'logs')
             if os.path.exists(base_path):
                 if not os.path.exists(potential_log_dir):
-                    try:
-                        os.makedirs(potential_log_dir, exist_ok=True)
+                    os.makedirs(potential_log_dir, exist_ok=True)
                 log_dir = potential_log_dir
                 break
         
