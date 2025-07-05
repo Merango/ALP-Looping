@@ -64,6 +64,7 @@ def test_state_recovery():
     recovery_context = {}
 
     def mock_state_recovery(context: Dict[str, Any]):
+        # Modify the context
         context['recovered'] = True
 
     strategy = DegradationStrategy(
@@ -73,8 +74,10 @@ def test_state_recovery():
 
     error = ALPLoopError("Recoverable error")
     
-    assert strategy.handle_error(error, context=recovery_context) is True
-    assert recovery_context.get('recovered') is True
+    # Explicitly pass context and verify
+    context_copy = dict(recovery_context)
+    assert strategy.handle_error(error, context=context_copy) is True
+    assert context_copy.get('recovered') is True
 
 
 def test_strategy_reset():
