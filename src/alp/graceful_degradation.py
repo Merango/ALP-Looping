@@ -61,21 +61,22 @@ class DegradationStrategy:
         # Increment retry count
         self.current_retry_count += 1
         
-        # Attempt state recovery
-        try:
-            # Call state recovery function if provided
-            if self.state_recovery_fn:
+        # Default to recovery
+        context['recovered'] = True
+        
+        # Attempt state recovery if possible
+        if self.state_recovery_fn:
+            try:
+                # Call state recovery function
                 recovery_result = self.state_recovery_fn(context)
                 
                 # If function returns a dictionary, update context
                 if isinstance(recovery_result, dict):
                     context.update(recovery_result)
-            
-            # Force recovery flag
-            context['recovered'] = True
-        except Exception as recovery_error:
-            logging.error(f"State recovery failed: {recovery_error}")
-            return False
+            except Exception as recovery_error:
+                logging.error(f"State recovery failed: {recovery_error}")
+                context['recovered'] = False
+                return False
 
         return True
 
