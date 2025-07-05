@@ -22,20 +22,14 @@ class LogErrorReporter(BaseErrorReporter):
             log_file (Optional[str]): Path to log file. If None, logs to console.
             log_level (int): Logging level from the logging module
         """
-        super().__init__()
+        # Configure logging BEFORE calling super().__init__()
+        logging.basicConfig(
+            filename=log_file,
+            level=log_level,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
         
-        # Configure logging
-        if log_file:
-            logging.basicConfig(
-                filename=log_file, 
-                level=log_level,
-                format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-            )
-        else:
-            logging.basicConfig(
-                level=log_level,
-                format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-            )
+        super().__init__()
     
     def report_error(
         self, 
