@@ -36,7 +36,7 @@ class DegradationStrategy:
         Returns:
             bool: Whether the error was successfully handled
         """
-        # Always ensure context is a dict
+        # Ensure context is a dictionary
         context = context or {}
         logging.error(f"Error in {self.name}: {error}")
 
@@ -67,10 +67,10 @@ class DegradationStrategy:
                 # Call recovery function and modify context in-place
                 recovery_result = self.state_recovery_fn(context)
                 
-                # Ensure 'recovered' is set 
+                # Ensure 'recovered' is set
                 context['recovered'] = True
                 
-                # If additional context was returned, update
+                # Optionally update context with recovery result
                 if isinstance(recovery_result, dict):
                     context.update(recovery_result)
             except Exception as recovery_error:
