@@ -10,7 +10,7 @@ def test_error_reporting_initialization():
 
 def test_report_error():
     """Test reporting an error."""
-    log_file = 'test_error.log'
+    log_file = 'logs/test_error.log'
     
     # Custom notification callback for testing
     notification_log = []
