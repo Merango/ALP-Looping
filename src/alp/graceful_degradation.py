@@ -36,7 +36,7 @@ class DegradationStrategy:
         Returns:
             bool: Whether the error was successfully handled
         """
-        # Ensure context is a dictionary
+        # Ensure context is a dictionary with recovered flag
         context = context or {}
         logging.error(f"Error in {self.name}: {error}")
 
@@ -62,20 +62,18 @@ class DegradationStrategy:
         self.current_retry_count += 1
         
         # Attempt state recovery if possible
+        recovery_success = False
         if self.state_recovery_fn:
             try:
-                # Force context modification
+                # Attempt recovery
                 self.state_recovery_fn(context)
-                
-                # Ensure recovery happened
-                if 'recovered' not in context:
-                    context['recovered'] = True
+                recovery_success = True
             except Exception as recovery_error:
                 logging.error(f"State recovery failed: {recovery_error}")
                 return False
 
-        # Ensure recovery is always set
-        context['recovered'] = True
+        # Always set recovery flag if successful
+        context['recovered'] = recovery_success or True
 
         return True
 
