@@ -36,7 +36,7 @@ def test_report_error():
     assert 'context' in error_report
     
     # Verify log file was created
-    assert os.path.exists(log_file)
+    assert os.path.exists(error_manager.log_file)
     
     # Verify notification callback was called
     assert len(notification_log) == 1
