@@ -63,6 +63,7 @@ class DegradationStrategy:
         # Attempt state recovery if possible
         if self.state_recovery_fn:
             try:
+                # Explicitly pass context to state recovery function
                 self.state_recovery_fn(context)
             except Exception as recovery_error:
                 logging.error(f"State recovery failed: {recovery_error}")
