@@ -60,11 +60,10 @@ def test_critical_non_recoverable_error():
 
 
 def test_state_recovery():
-    """Test state recovery mechanism."""
+    """Test state recovery mechanism with explicit recovery flag."""
     def mock_state_recovery(context: Dict[str, Any]):
         """Modify the context as part of recovery."""
         context['previous_state'] = 'degraded'
-        context['recovered'] = True
         return None
 
     strategy = DegradationStrategy(
