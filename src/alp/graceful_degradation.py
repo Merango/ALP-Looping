@@ -1,6 +1,6 @@
 import logging
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, Optional, Union
 
 from .exceptions import ALPLoopError, ErrorSeverity, IterationInterruptionError
 
@@ -63,8 +63,16 @@ class DegradationStrategy:
         # Attempt state recovery if possible
         if self.state_recovery_fn:
             try:
-                # Use function to modify context directly
-                self.state_recovery_fn(context)
+                # Attempt to call recovery function
+                result = self.state_recovery_fn(context)
+                
+                # If result is a dict, update context
+                if isinstance(result, dict):
+                    context.update(result)
+                
+                # If no result returned, assume context was modified in-place
+                if 'recovered' not in context:
+                    context['recovered'] = True
             except Exception as recovery_error:
                 logging.error(f"State recovery failed: {recovery_error}")
                 return False
