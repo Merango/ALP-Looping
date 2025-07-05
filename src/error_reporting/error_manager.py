@@ -1,5 +1,6 @@
 import logging
 import sys
+import os
 from typing import Dict, Any, Optional, Callable
 from enum import Enum, auto
 import traceback
@@ -32,6 +33,9 @@ class ErrorReportingManager:
             log_file (str): Path to the log file for error logging.
             notification_callback (Optional[Callable]): Optional callback for custom error notifications.
         """
+        # Ensure log directory exists
+        os.makedirs(os.path.dirname(log_file) or '.', exist_ok=True)
+        
         # Configure logging
         logging.basicConfig(
             filename=log_file, 
@@ -39,6 +43,7 @@ class ErrorReportingManager:
             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
         )
         self.logger = logging.getLogger(__name__)
+        self.log_file = log_file
         self.notification_callback = notification_callback
     
     def report_error(
