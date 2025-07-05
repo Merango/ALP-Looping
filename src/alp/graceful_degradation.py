@@ -63,16 +63,15 @@ class DegradationStrategy:
         # Attempt state recovery if possible
         if self.state_recovery_fn:
             try:
-                # Attempt to call recovery function
-                result = self.state_recovery_fn(context)
+                # Force context modification
+                modified_context = self.state_recovery_fn(context)
                 
-                # If result is a dict, update context
-                if isinstance(result, dict):
-                    context.update(result)
+                # Update context with result if it's a dict
+                if isinstance(modified_context, dict):
+                    context.update(modified_context)
                 
-                # If no result returned, assume context was modified in-place
-                if 'recovered' not in context:
-                    context['recovered'] = True
+                # Explicitly set 'recovered' if not already set
+                context['recovered'] = True
             except Exception as recovery_error:
                 logging.error(f"State recovery failed: {recovery_error}")
                 return False
