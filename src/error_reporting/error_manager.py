@@ -33,23 +33,32 @@ class ErrorReportingManager:
             log_file (str): Path to the log file for error logging.
             notification_callback (Optional[Callable]): Optional callback for custom error notifications.
         """
-        # Determine base path - prefer logs directory in project root, fallback to relative path
+        # Determine base path - try multiple strategies
         potential_base_paths = [
-            os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'logs')),
-            os.path.abspath(os.path.join(os.getcwd(), 'logs')),
-            os.path.dirname(log_file)
+            # Relative to current working directory
+            os.path.abspath(os.getcwd()),
+            # Relative to the script's location
+            os.path.abspath(os.path.dirname(__file__)),
+            # Relative to project root from script location
+            os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')),
+            # Home directory fallback
+            os.path.expanduser('~')
         ]
         
-        # Find the first existing logs directory or create one
+        # Try to find an existing logs directory or create one
         log_dir = None
-        for path in potential_base_paths:
-            if os.path.exists(path):
-                log_dir = path
+        for base_path in potential_base_paths:
+            potential_log_dir = os.path.join(base_path, 'logs')
+            if os.path.exists(base_path):
+                if not os.path.exists(potential_log_dir):
+                    try:
+                        os.makedirs(potential_log_dir, exist_ok=True)
+                log_dir = potential_log_dir
                 break
         
-        # If no logs directory found, create one in the project root
+        # If no suitable log directory found, use a fallback
         if not log_dir:
-            log_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'logs'))
+            log_dir = os.path.join(potential_base_paths[0], 'logs')
             os.makedirs(log_dir, exist_ok=True)
         
         # Construct full log file path
