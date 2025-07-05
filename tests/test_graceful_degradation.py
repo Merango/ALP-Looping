@@ -62,9 +62,10 @@ def test_critical_non_recoverable_error():
 def test_state_recovery():
     """Test state recovery mechanism."""
     def mock_state_recovery(context: Dict[str, Any]):
-        # Modify the context
+        """Modify the context as part of recovery."""
+        context['previous_state'] = 'degraded'
         context['recovered'] = True
-        return None  # Explicit return of None
+        return None
 
     strategy = DegradationStrategy(
         name="recovery_test", 
@@ -73,14 +74,14 @@ def test_state_recovery():
 
     error = ALPLoopError("Recoverable error")
     
-    # Explicitly create a context
+    # Create context and handle error
     context = {}
-    
-    # Handle the error and check context modification
     result = strategy.handle_error(error, context=context)
     
+    # Verify context modification and successful error handling
     assert result is True
     assert context.get('recovered') is True
+    assert context.get('previous_state') == 'degraded'
 
 
 def test_strategy_reset():
